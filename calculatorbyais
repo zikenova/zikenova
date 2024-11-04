@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Monthly Payment Calculator</title>
+    <style>
+        /* Base styling */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #a0c4ff, #ffd6a5);
+        }
+        .calculator-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .calculator-container h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            font-size: 14px;
+            color: #555;
+            text-align: left;
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-container">
+    <h2>Real Estate Monthly Payment Calculator</h2>
+
+    <!-- Loan and Financial Details -->
+    <label for="loanAmount">Loan Amount:</label>
+    <input type="number" id="loanAmount" placeholder="Enter loan amount" required>
+
+    <label for="interestRate">Interest Rate (% per year):</label>
+    <input type="number" id="interestRate" placeholder="Enter interest rate" required>
+
+    <label for="loanTerm">Loan Term (years):</label>
+    <input type="number" id="loanTerm" placeholder="Enter loan term in years" required>
+
+    <label for="downPayment">Down Payment (%):</label>
+    <input type="number" id="downPayment" placeholder="Enter down payment percentage" required>
+
+    <!-- Additional Costs -->
+    <label for="yearlyTaxes">Yearly Taxes ($):</label>
+    <input type="number" id="yearlyTaxes" placeholder="Enter yearly taxes" required>
+
+    <label for="associationFee">Monthly Association Fee ($):</label>
+    <input type="number" id="associationFee" placeholder="Enter association fee" required>
+
+    <label for="insurance">Yearly Insurance ($):</label>
+    <input type="number" id="insurance" placeholder="Enter insurance" required>
+
+    <!-- Calculate Button -->
+    <button onclick="calculatePayment()">Calculate Monthly Payment</button>
+
+    <!-- Result Display -->
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    function calculatePayment() {
+        // Get input values
+        const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+        const interestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+        const loanTerm = parseInt(document.getElementById('loanTerm').value) * 12;
+        const downPaymentPercent = parseFloat(document.getElementById('downPayment').value) / 100;
+        const yearlyTaxes = parseFloat(document.getElementById('yearlyTaxes').value);
+        const associationFee = parseFloat(document.getElementById('associationFee').value);
+        const insurance = parseFloat(document.getElementById('insurance').value);
+
+        // Calculate loan details
+        const downPaymentAmount = loanAmount * downPaymentPercent;
+        const principal = loanAmount - downPaymentAmount;
+
+        // Calculate monthly payment on the principal
+        const monthlyPrincipalPayment = principal * interestRate / (1 - Math.pow(1 + interestRate, -loanTerm));
+
+        // Check if PMI is required (if down payment is less than 20%)
+        const pmi = downPaymentPercent < 0.2 ? principal * 0.01 / 12 : 0;
+
+        // Calculate additional monthly costs
+        const monthlyTaxes = yearlyTaxes / 12;
+        const monthlyInsurance = insurance / 12;
+        
+        // Calculate total monthly payment
+        const monthlyPayment = monthlyPrincipalPayment + monthlyTaxes + associationFee + monthlyInsurance + pmi;
+
+        // Display the result
+        document.getElementById('result').innerText = 
+            monthlyPayment ? `Monthly Payment: $${monthlyPayment.toFixed(2)} (includes PMI: $${pmi.toFixed(2)})` : "Please fill in all fields correctly.";
+    }
+</script>
+
+</body>
+</html>
